@@ -4,7 +4,7 @@ import {
   Building2, Send, Laptop, Sparkles, CheckCircle2, Sun, Moon, FileText, 
   Globe, Users, Plus, Check, DollarSign, TrendingUp, BarChart2, Lock, 
   Unlock, MessageSquare, LogOut, Filter, Activity, Clock, RefreshCw, ChevronRight, X,
-  Paperclip, Download, File, ArrowUpRight, GripVertical
+  Paperclip, Download, File, ArrowUpRight, GripVertical, Search, Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -89,6 +89,8 @@ export default function App() {
   const [draggedTaskIdx, setDraggedTaskIdx] = useState<number | null>(null);
   const [draggedProjId, setDraggedProjId] = useState<string | null>(null);
   const [isDraggingOverIdx, setIsDraggingOverIdx] = useState<number | null>(null);
+  const [taskSearchQuery, setTaskSearchQuery] = useState<string>('');
+  const [projectViewMode, setProjectViewMode] = useState<'list' | 'gantt'>('list');
 
   const handleDragStart = (e: React.DragEvent, projId: string, index: number) => {
     setDraggedTaskIdx(index);
@@ -146,6 +148,89 @@ export default function App() {
       console.error(err);
       fetchData();
     }
+  };
+
+  // Gantt Chart Date formatting helpers
+  const getMinifiedDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString(language === 'en' ? 'en-US' : 'km-KH', {
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const getIntermediateDate = (startStr: string, endStr: string, fraction: number) => {
+    try {
+      const start = new Date(startStr).getTime();
+      const end = new Date(endStr).getTime();
+      if (isNaN(start) || isNaN(end)) return '';
+      const target = start + (end - start) * fraction;
+      return new Date(target).toLocaleDateString(language === 'en' ? 'en-US' : 'km-KH', {
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return '';
+    }
+  };
+
+  // CSV Export Utility Functions
+  const downloadCsv = (headers: string[], rows: string[][], filename: string) => {
+    const escapeField = (field: any) => {
+      const stringified = field === null || field === undefined ? '' : String(field);
+      return `"${stringified.replace(/"/g, '""')}"`;
+    };
+
+    const csvContent = [
+      headers.map(escapeField).join(','),
+      ...rows.map(row => row.map(escapeField).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportLeadsCsv = () => {
+    const headers = ['Lead ID', 'Company', 'Inquiry Point Name', 'Email', 'Phone', 'Risk Score', 'Pipeline Mode', 'Created At'];
+    const rows = crmLeads.map(lead => [
+      lead.id,
+      lead.company,
+      lead.name,
+      lead.email,
+      lead.phone,
+      String(lead.riskScore),
+      lead.status,
+      lead.createdAt
+    ]);
+    downloadCsv(headers, rows, 'crm_leads_export.csv');
+  };
+
+  const handleExportInvoicesCsv = () => {
+    const headers = ['Invoice ID', 'Client Company', 'Title (EN)', 'Title (KH)', 'Amount (USD)', 'Due Date', 'Status', 'Created At', 'Billing Period'];
+    const rows = invoices.map(inv => [
+      inv.id,
+      inv.clientCompany,
+      inv.titleEn,
+      inv.titleKh,
+      String(inv.amount),
+      inv.dueDate,
+      inv.status,
+      inv.createdAt,
+      inv.billingPeriod
+    ]);
+    downloadCsv(headers, rows, 'invoices_export.csv');
   };
 
   // Base64 file converter helper
@@ -971,10 +1056,59 @@ export default function App() {
                     
                     {/* Projects Deployments card array */}
                     <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-6">
-                      <h3 className="text-lg font-extrabold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                        <Laptop className="w-5 h-5 text-emerald-500" />
-                        {t('portal.projects')}
-                      </h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                        <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+                          <Laptop className="w-5 h-5 text-emerald-500" />
+                          {t('portal.projects')}
+                        </h3>
+                        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setProjectViewMode('list')}
+                            className={`px-3 py-1 text-[10px] sm:text-[11px] font-mono rounded-lg transition-all cursor-pointer ${
+                              projectViewMode === 'list' 
+                                ? 'bg-emerald-600/90 text-white font-bold' 
+                                : 'text-slate-400 hover:text-slate-200'
+                            }`}
+                          >
+                            {language === 'en' ? 'LIST VIEW' : 'បញ្ជីភារកិច្ច'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setProjectViewMode('gantt')}
+                            className={`px-3 py-1 text-[10px] sm:text-[11px] font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+                              projectViewMode === 'gantt' 
+                                ? 'bg-emerald-600/90 text-white font-bold' 
+                                : 'text-slate-400 hover:text-slate-200'
+                            }`}
+                          >
+                            <Calendar className="w-3 h-3" />
+                            {language === 'en' ? 'GANTT TIMELINE' : 'គំនូសតាង GANTT'}
+                          </button>
+                        </div>
+                      </div>
+
+                      {projects.length > 0 && (
+                        <div className="relative">
+                          <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                          <input
+                            type="text"
+                            value={taskSearchQuery}
+                            onChange={(e) => setTaskSearchQuery(e.target.value)}
+                            placeholder={language === 'en' ? "Search tasks by name..." : "ស្វែងរកភារកិច្ចតាមឈ្មោះ..."}
+                            className="w-full pl-9 pr-8 py-2 bg-slate-950 border border-slate-800/80 hover:border-slate-700 focus:border-emerald-500 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-all font-mono"
+                          />
+                          {taskSearchQuery && (
+                            <button
+                              type="button"
+                              onClick={() => setTaskSearchQuery('')}
+                              className="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      )}
 
                       {projects.length === 0 ? (
                         <div className="p-6 bg-slate-950/45 text-slate-400 font-mono text-xs rounded-xl border border-slate-800 text-center">
@@ -1009,134 +1143,340 @@ export default function App() {
                                 </div>
                               </div>
 
-                              {/* Interactive checklists */}
-                              <div className="space-y-2 pt-2 border-t border-slate-900">
-                                <span className="text-[10px] font-mono text-slate-500 block uppercase tracking-wider">{t('portal.tasks')}</span>
-                                <div className="space-y-1.5">
-                                  {proj.tasks.map((task, idx) => {
-                                    const isEditing = editingTaskId === task.id && editingProjId === proj.id;
-                                    const isDragging = draggedTaskIdx === idx && draggedProjId === proj.id;
-                                    const isOver = isDraggingOverIdx === idx && draggedProjId === proj.id;
-                                    return (
-                                      <div
-                                        key={task.id}
-                                        draggable={!isEditing}
-                                        onDragStart={(e) => handleDragStart(e, proj.id, idx)}
-                                        onDragOver={(e) => handleDragOver(e, idx)}
-                                        onDragEnd={handleDragEnd}
-                                        onDrop={(e) => handleDrop(e, proj.id, idx)}
-                                        className={`w-full p-2.5 bg-slate-900/60 border rounded-xl flex flex-col gap-1.5 transition-all duration-200 ${
-                                          isDragging 
-                                            ? 'opacity-25 border-dashed border-slate-700 bg-slate-950/20 scale-95 select-none pointer-events-none' 
-                                            : isOver 
-                                              ? 'border-emerald-500 bg-slate-850 shadow-md shadow-emerald-500/10 -translate-y-0.5 scale-[1.01]' 
-                                              : 'border-slate-800/80 hover:border-slate-700/80'
-                                        }`}
-                                      >
-                                        <div className="flex justify-between items-center gap-3">
-                                          <div className="flex items-center gap-1.5 text-left flex-1 min-w-0">
-                                            {/* Drag Handle */}
-                                            <div 
-                                              className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-slate-400 p-0.5 transition-colors shrink-0 select-none touch-none" 
-                                              title="Drag to reorder"
-                                            >
-                                              <GripVertical className="w-3.5 h-3.5" />
-                                            </div>
-                                          <button
-                                            type="button"
-                                            onClick={() => handleToggleTask(proj.id, task.id, !task.completed)}
-                                            className="flex items-center gap-2.5 text-left flex-1 cursor-pointer group"
-                                          >
-                                            <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0 ${
-                                              task.completed 
-                                                ? 'bg-emerald-600 border-emerald-500 text-white' 
-                                                : 'border-slate-700 text-transparent group-hover:border-slate-500'
-                                            }`}>
-                                              <Check className="w-3 h-3" />
-                                            </div>
-                                            <span className={`text-[11px] font-mono leading-tight ${task.completed ? 'line-through text-slate-500' : 'text-slate-300'}`}>
-                                              {language === 'en' ? task.nameEn : task.nameKh}
-                                            </span>
-                                          </button>
-                                        </div>
+                              {/* Conditional View: List vs Gantt */}
+                              {projectViewMode === 'list' ? (
+                                /* Interactive checklists */
+                                <div className="space-y-2 pt-2 border-t border-slate-900">
+                                  <span className="text-[10px] font-mono text-slate-500 block uppercase tracking-wider">{t('portal.tasks')}</span>
+                                  <div className="space-y-1.5">
+                                    {(() => {
+                                      const filteredTasks = proj.tasks.filter((task) => {
+                                        const query = taskSearchQuery.toLowerCase().trim();
+                                        if (!query) return true;
+                                        const nameEn = (task.nameEn || '').toLowerCase();
+                                        const nameKh = (task.nameKh || '').toLowerCase();
+                                        return nameEn.includes(query) || nameKh.includes(query);
+                                      });
 
-                                        {/* Trigger note editor button */}
-                                          <button
-                                            type="button"
-                                            onClick={() => {
-                                              if (isEditing) {
-                                                setEditingTaskId(null);
-                                                setEditingProjId(null);
-                                              } else {
-                                                setEditingTaskId(task.id);
-                                                setEditingProjId(proj.id);
-                                                setTaskNoteText(task.note || '');
-                                              }
-                                            }}
-                                            className={`p-1 rounded opacity-70 hover:opacity-100 hover:bg-slate-800 transition-all cursor-pointer text-xs flex items-center gap-1 ${
-                                              task.note ? 'text-emerald-400' : 'text-slate-500'
+                                      if (filteredTasks.length === 0) {
+                                        return (
+                                          <div className="p-4 bg-slate-950/45 text-slate-500 font-mono text-[10px] rounded-xl border border-slate-800 border-dashed text-center">
+                                            {language === 'en' ? 'NO MATCHING TASKS FOUND' : 'រកមិនឃើញភារកិច្ចដែលត្រូវគ្នាទេ'}
+                                          </div>
+                                        );
+                                      }
+
+                                      return filteredTasks.map((task) => {
+                                        const originalIdx = proj.tasks.indexOf(task);
+                                        const isEditing = editingTaskId === task.id && editingProjId === proj.id;
+                                        const isDragging = draggedTaskIdx === originalIdx && draggedProjId === proj.id;
+                                        const isOver = isDraggingOverIdx === originalIdx && draggedProjId === proj.id;
+                                        return (
+                                          <div
+                                            key={task.id}
+                                            draggable={!isEditing}
+                                            onDragStart={(e) => handleDragStart(e, proj.id, originalIdx)}
+                                            onDragOver={(e) => handleDragOver(e, originalIdx)}
+                                            onDragEnd={handleDragEnd}
+                                            onDrop={(e) => handleDrop(e, proj.id, originalIdx)}
+                                            className={`w-full p-2.5 bg-slate-900/60 border rounded-xl flex flex-col gap-1.5 transition-all duration-200 ${
+                                              isDragging 
+                                                ? 'opacity-25 border-dashed border-slate-700 bg-slate-950/20 scale-95 select-none pointer-events-none' 
+                                                : isOver 
+                                                  ? 'border-emerald-500 bg-slate-850 shadow-md shadow-emerald-500/10 -translate-y-0.5 scale-[1.01]' 
+                                                  : 'border-slate-800/80 hover:border-slate-700/80'
                                             }`}
-                                            title={task.note ? t('task.editNote') : t('task.addNote')}
                                           >
-                                            <FileText className="w-3.5 h-3.5" />
-                                            {task.note && <span className="text-[9px] font-mono font-medium hidden sm:inline">{t('task.editNote')}</span>}
-                                            {!task.note && <span className="text-[9px] font-mono font-medium hidden sm:inline">{t('task.addNote')}</span>}
-                                          </button>
-                                        </div>
+                                          <div className="flex justify-between items-center gap-3">
+                                            <div className="flex items-center gap-1.5 text-left flex-1 min-w-0">
+                                              {/* Drag Handle */}
+                                              <div 
+                                                className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-slate-400 p-0.5 transition-colors shrink-0 select-none touch-none" 
+                                                title="Drag to reorder"
+                                              >
+                                                <GripVertical className="w-3.5 h-3.5" />
+                                              </div>
+                                            <button
+                                              type="button"
+                                              onClick={() => handleToggleTask(proj.id, task.id, !task.completed)}
+                                              className="flex items-center gap-2.5 text-left flex-1 cursor-pointer group"
+                                            >
+                                              <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all shrink-0 ${
+                                                task.completed 
+                                                  ? 'bg-emerald-600 border-emerald-500 text-white' 
+                                                  : 'border-slate-700 text-transparent group-hover:border-slate-500'
+                                              }`}>
+                                                <Check className="w-3 h-3" />
+                                              </div>
+                                              <span className={`text-[11px] font-mono leading-tight ${task.completed ? 'line-through text-slate-500' : 'text-slate-300'}`}>
+                                                {language === 'en' ? task.nameEn : task.nameKh}
+                                              </span>
+                                            </button>
+                                          </div>
 
-                                        {/* Inline note edit form */}
-                                        {isEditing ? (
-                                          <div className="mt-1 p-2 bg-slate-950/80 rounded-lg border border-slate-800 space-y-2">
-                                            <textarea
-                                              value={taskNoteText}
-                                              onChange={(e) => setTaskNoteText(e.target.value)}
-                                              placeholder={t('task.notePlaceholder')}
-                                              className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-lg p-2 text-[10px] font-mono text-slate-200 outline-none resize-none h-14"
-                                              autoFocus
-                                            />
-                                            <div className="flex justify-end gap-1.5">
-                                              <button
-                                                type="button"
-                                                onClick={() => {
+                                          {/* Trigger note editor button */}
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                if (isEditing) {
                                                   setEditingTaskId(null);
                                                   setEditingProjId(null);
-                                                }}
-                                                className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-400 text-[10px] rounded font-mono transition-colors cursor-pointer"
-                                              >
-                                                {t('task.cancel')}
-                                              </button>
-                                              <button
-                                                type="button"
-                                                onClick={() => handleUpdateTaskNote(proj.id, task.id, taskNoteText)}
-                                                className="px-2.5 py-0.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] rounded font-mono font-medium transition-colors cursor-pointer flex items-center gap-1"
-                                              >
-                                                <CheckCircle2 className="w-3 h-3" />
-                                                {t('task.saveNote')}
-                                              </button>
-                                            </div>
+                                                } else {
+                                                  setEditingTaskId(task.id);
+                                                  setEditingProjId(proj.id);
+                                                  setTaskNoteText(task.note || '');
+                                                }
+                                              }}
+                                              className={`p-1 rounded opacity-70 hover:opacity-100 hover:bg-slate-800 transition-all cursor-pointer text-xs flex items-center gap-1 ${
+                                                task.note ? 'text-emerald-400' : 'text-slate-500'
+                                              }`}
+                                              title={task.note ? t('task.editNote') : t('task.addNote')}
+                                            >
+                                              <FileText className="w-3.5 h-3.5" />
+                                              {task.note && <span className="text-[9px] font-mono font-medium hidden sm:inline">{t('task.editNote')}</span>}
+                                              {!task.note && <span className="text-[9px] font-mono font-medium hidden sm:inline">{t('task.addNote')}</span>}
+                                            </button>
                                           </div>
-                                        ) : (
-                                          // Render existing note text if present
-                                          task.note && (
-                                            <div className="mt-1 text-[10px] font-mono text-amber-500/90 bg-amber-500/5 px-2 py-1 border border-amber-500/10 rounded-lg flex items-start gap-1.5">
-                                              <span className="text-amber-500 select-none">💬</span>
-                                              <p className="whitespace-pre-wrap flex-1 italic leading-relaxed">{task.note}</p>
-                                              <button
-                                                type="button"
-                                                onClick={() => handleUpdateTaskNote(proj.id, task.id, '')}
-                                                className="text-slate-500 hover:text-rose-400 font-bold px-1 transition-colors leading-none align-middle cursor-pointer"
-                                                title="Delete note"
-                                              >
-                                                ×
-                                              </button>
+
+                                          {/* Inline note edit form */}
+                                          {isEditing ? (
+                                            <div className="mt-1 p-2 bg-slate-950/80 rounded-lg border border-slate-800 space-y-2">
+                                              <textarea
+                                                value={taskNoteText}
+                                                onChange={(e) => setTaskNoteText(e.target.value)}
+                                                placeholder={t('task.notePlaceholder')}
+                                                className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-lg p-2 text-[10px] font-mono text-slate-200 outline-none resize-none h-14"
+                                                autoFocus
+                                              />
+                                              <div className="flex justify-end gap-1.5">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    setEditingTaskId(null);
+                                                    setEditingProjId(null);
+                                                  }}
+                                                  className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-400 text-[10px] rounded font-mono transition-colors cursor-pointer"
+                                                >
+                                                  {t('task.cancel')}
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleUpdateTaskNote(proj.id, task.id, taskNoteText)}
+                                                  className="px-2.5 py-0.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] rounded font-mono font-medium transition-colors cursor-pointer flex items-center gap-1"
+                                                >
+                                                  <CheckCircle2 className="w-3 h-3" />
+                                                  {t('task.saveNote')}
+                                                </button>
+                                              </div>
                                             </div>
-                                          )
-                                        )}
+                                          ) : (
+                                            // Render existing note text if present
+                                            task.note && (
+                                              <div className="mt-1 text-[10px] font-mono text-amber-500/90 bg-amber-500/5 px-2 py-1 border border-amber-500/10 rounded-lg flex items-start gap-1.5">
+                                                <span className="text-amber-500 select-none">💬</span>
+                                                <p className="whitespace-pre-wrap flex-1 italic leading-relaxed">{task.note}</p>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleUpdateTaskNote(proj.id, task.id, '')}
+                                                  className="text-slate-500 hover:text-rose-400 font-bold px-1 transition-colors leading-none align-middle cursor-pointer"
+                                                  title="Delete note"
+                                                >
+                                                  ×
+                                                </button>
+                                              </div>
+                                            )
+                                          )}
+                                        </div>
+                                        );
+                                      });
+                                    })()}
+                                  </div>
+                                </div>
+                              ) : (
+                                /* Gantt Timeline View */
+                                <div className="space-y-4 pt-2 border-t border-slate-900">
+                                  {(() => {
+                                    const filteredTasks = proj.tasks.filter((task) => {
+                                      const query = taskSearchQuery.toLowerCase().trim();
+                                      if (!query) return true;
+                                      const nameEn = (task.nameEn || '').toLowerCase();
+                                      const nameKh = (task.nameKh || '').toLowerCase();
+                                      return nameEn.includes(query) || nameKh.includes(query);
+                                    });
+
+                                    if (filteredTasks.length === 0) {
+                                      return (
+                                        <div className="p-4 bg-slate-950/45 text-slate-500 font-mono text-[10px] rounded-xl border border-slate-800 border-dashed text-center">
+                                          {language === 'en' ? 'NO MATCHING TASKS FOUND' : 'រកមិនឃើញភារកិច្ចដែលត្រូវគ្នាទេ'}
+                                        </div>
+                                      );
+                                    }
+
+                                    return (
+                                      <div className="space-y-2.5">
+                                        {/* Timeline Header Scale */}
+                                        <div className="flex text-[9px] font-mono uppercase text-slate-500 font-bold tracking-wider border-b border-slate-900/60 pb-1.5 px-1">
+                                          <div className="w-[35%] shrink-0">
+                                            {language === 'en' ? 'PHASE CHECKPOINT' : 'ចំណុចត្រួតពិនិត្យ'}
+                                          </div>
+                                          <div className="w-[65%] flex justify-between text-right pl-3 relative pr-1">
+                                            <span className="text-left w-14 shrink-0 truncate">{getMinifiedDate(proj.startDate)}</span>
+                                            <span className="text-center w-14 shrink-0 truncate">{getIntermediateDate(proj.startDate, proj.endDate, 0.33)}</span>
+                                            <span className="text-center w-14 shrink-0 truncate">{getIntermediateDate(proj.startDate, proj.endDate, 0.66)}</span>
+                                            <span className="text-right w-14 shrink-0 truncate">{getMinifiedDate(proj.endDate)}</span>
+                                          </div>
+                                        </div>
+
+                                        {/* Gantt rows */}
+                                        <div className="space-y-2">
+                                          {filteredTasks.map((task, idx) => {
+                                            const originalIdx = proj.tasks.indexOf(task);
+                                            const isEditing = editingTaskId === task.id && editingProjId === proj.id;
+                                            
+                                            // Compute horizontal spacing
+                                            const startPercent = (originalIdx / proj.tasks.length) * 100;
+                                            const widthPercent = (1 / proj.tasks.length) * 100;
+
+                                            // Highlight first incomplete task as active
+                                            const firstIncompleteIdx = proj.tasks.findIndex(t => !t.completed);
+                                            const isActive = firstIncompleteIdx === originalIdx;
+
+                                            return (
+                                              <div key={task.id} className="space-y-1.5 border-b border-slate-900/20 pb-2 last:border-0 last:pb-0">
+                                                <div className="group/gantt flex items-center p-0.5 hover:bg-slate-900/20 rounded-xl transition-all">
+                                                  
+                                                  {/* Left column: Check, name, note handle */}
+                                                  <div className="w-[35%] flex items-center gap-1.5 shrink-0 pr-2 min-w-0">
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => handleToggleTask(proj.id, task.id, !task.completed)}
+                                                      className="w-3.5 h-3.5 rounded border border-slate-800 hover:border-slate-600 flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                                                      style={{
+                                                        borderColor: task.completed ? '#10b981' : undefined,
+                                                        backgroundColor: task.completed ? '#10b981' : undefined,
+                                                        color: '#ffffff'
+                                                      }}
+                                                    >
+                                                      {task.completed && <Check className="w-2.5 h-2.5" />}
+                                                    </button>
+                                                    <span 
+                                                      title={`${language === 'en' ? task.nameEn : task.nameKh} (Click to toggle)`}
+                                                      className={`text-[10px] font-mono leading-tight truncate flex-1 min-w-0 cursor-pointer ${
+                                                        task.completed ? 'line-through text-slate-500' : 'text-slate-300 group-hover/gantt:text-emerald-400'
+                                                      }`}
+                                                      onClick={() => handleToggleTask(proj.id, task.id, !task.completed)}
+                                                    >
+                                                      {language === 'en' ? task.nameEn : task.nameKh}
+                                                    </span>
+
+                                                    {/* Edit note trigger */}
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                        if (isEditing) {
+                                                          setEditingTaskId(null);
+                                                          setEditingProjId(null);
+                                                        } else {
+                                                          setEditingTaskId(task.id);
+                                                          setEditingProjId(proj.id);
+                                                          setTaskNoteText(task.note || '');
+                                                        }
+                                                      }}
+                                                      className={`p-0.5 rounded transition-all cursor-pointer ${
+                                                        task.note ? 'text-amber-400 opacity-100' : 'text-slate-600 opacity-30 hover:opacity-100 hover:text-slate-400'
+                                                      }`}
+                                                      title={task.note ? t('task.editNote') : t('task.addNote')}
+                                                    >
+                                                      <FileText className="w-3 h-3" />
+                                                    </button>
+                                                  </div>
+
+                                                  {/* Right column: Gantt track runway */}
+                                                  <div className="w-[65%] h-5 bg-slate-950/45 rounded-lg relative overflow-hidden border border-slate-900/60 flex items-center pl-1 pr-1">
+                                                    {/* Vertical guideline markers */}
+                                                    <div className="absolute left-[33%] top-0 bottom-0 border-l border-slate-900/60 pointer-events-none" />
+                                                    <div className="absolute left-[66%] top-0 bottom-0 border-l border-slate-900/60 pointer-events-none" />
+
+                                                    {/* Horizontal guideline row wire */}
+                                                    <div className="absolute inset-0 flex items-center pointer-events-none">
+                                                      <div className="w-full border-t border-dashed border-slate-900/15"></div>
+                                                    </div>
+
+                                                    {/* Floating gantt bar */}
+                                                    <div
+                                                      onClick={() => handleToggleTask(proj.id, task.id, !task.completed)}
+                                                      className={`h-2.5 rounded cursor-pointer transition-all hover:brightness-110 relative ${
+                                                        task.completed
+                                                          ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-sm shadow-emerald-500/15'
+                                                          : isActive
+                                                            ? 'bg-gradient-to-r from-teal-500/90 to-emerald-500/90 animate-pulse border border-emerald-400/20'
+                                                            : 'bg-slate-800 hover:bg-slate-755 border border-slate-700/40'
+                                                      }`}
+                                                      style={{
+                                                        left: `${startPercent}%`,
+                                                        width: `${widthPercent}%`
+                                                      }}
+                                                      title={`${language === 'en' ? task.nameEn : task.nameKh} (${task.completed ? 'COMPLETED' : isActive ? 'ACTIVE' : 'PENDING'} - Click to toggle)`}
+                                                    />
+                                                  </div>
+                                                </div>
+
+                                                {/* Inline note edit form */}
+                                                {isEditing ? (
+                                                  <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl space-y-2 mt-1 ml-4 shadow-xl">
+                                                    <textarea
+                                                      value={taskNoteText}
+                                                      onChange={(e) => setTaskNoteText(e.target.value)}
+                                                      placeholder={t('task.notePlaceholder')}
+                                                      className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-lg p-2 text-[10px] font-mono text-slate-200 outline-none resize-none h-14"
+                                                      autoFocus
+                                                    />
+                                                    <div className="flex justify-end gap-1.5">
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                          setEditingTaskId(null);
+                                                          setEditingProjId(null);
+                                                        }}
+                                                        className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-400 text-[10px] rounded font-mono transition-colors cursor-pointer"
+                                                      >
+                                                        {t('task.cancel')}
+                                                      </button>
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => handleUpdateTaskNote(proj.id, task.id, taskNoteText)}
+                                                        className="px-2.5 py-0.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] rounded font-mono font-medium transition-colors cursor-pointer flex items-center gap-1"
+                                                      >
+                                                        <CheckCircle2 className="w-3 h-3" />
+                                                        {t('task.saveNote')}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                ) : (
+                                                  task.note && (
+                                                    <div className="mt-1 text-[10px] font-mono text-amber-500/90 bg-amber-500/5 px-2 py-1 border border-amber-500/10 rounded-lg flex items-start gap-1.5 ml-5">
+                                                      <span className="text-amber-500 select-none">💬</span>
+                                                      <p className="whitespace-pre-wrap flex-1 italic leading-relaxed">{task.note}</p>
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => handleUpdateTaskNote(proj.id, task.id, '')}
+                                                        className="text-slate-500 hover:text-rose-400 font-bold px-1 transition-colors leading-none align-middle cursor-pointer"
+                                                        title="Delete note"
+                                                      >
+                                                        ×
+                                                      </button>
+                                                    </div>
+                                                  )
+                                                )}
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
                                       </div>
                                     );
-                                  })}
+                                  })()}
                                 </div>
-                              </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -1145,9 +1485,21 @@ export default function App() {
 
                     {/* ESCROW & BILLING INVOICES PANEL */}
                     <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-6">
-                      <h3 className="text-lg font-extrabold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                        <DollarSign className="w-5 h-5 text-emerald-500" />
-                        {t('portal.invoices')}
+                      <h3 className="text-lg font-extrabold text-white flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-5 h-5 text-emerald-500" />
+                          {t('portal.invoices')}
+                        </div>
+                        {invoices.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={handleExportInvoicesCsv}
+                            className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-750 border border-slate-700/80 hover:border-slate-600 rounded-lg text-[10px] font-mono font-bold text-slate-300 hover:text-white transition-all cursor-pointer shadow-sm"
+                          >
+                            <Download className="w-3.5 h-3.5 text-emerald-400" />
+                            EXPORT CSV
+                          </button>
+                        )}
                       </h3>
 
                       {invoices.length === 0 ? (
@@ -1604,9 +1956,21 @@ export default function App() {
               
               {/* CRM leads table */}
               <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-1.5 border-b border-slate-800 pb-2">
-                  <Users className="w-5 h-5 text-emerald-500" />
-                  {t('admin.crm')}
+                <h3 className="text-base font-bold text-white flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-5 h-5 text-emerald-500" />
+                    {t('admin.crm')}
+                  </div>
+                  {crmLeads.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleExportLeadsCsv}
+                      className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-750 border border-slate-700/80 hover:border-slate-600 rounded-lg text-[10px] font-mono font-bold text-slate-300 hover:text-white transition-all cursor-pointer shadow-sm"
+                    >
+                      <Download className="w-3.5 h-3.5 text-emerald-400" />
+                      EXPORT CSV
+                    </button>
+                  )}
                 </h3>
 
                 <div className="overflow-x-auto">
