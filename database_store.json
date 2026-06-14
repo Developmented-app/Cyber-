@@ -146,31 +146,36 @@
           "id": "t1",
           "nameEn": "Corporate Threat Asset Discovery Schema",
           "nameKh": "ការធ្វើបញ្ជីសារពើភ័ណ្ឌទ្រព្យសកម្ម និងការគំរាមកំហែង",
-          "completed": true
+          "completed": true,
+          "priority": "low"
         },
         {
           "id": "t2",
           "nameEn": "Access Management Policy Decrypting Standards",
           "nameKh": "ប្រព័ន្ធគ្រប់គ្រងសិទ្ធិចូលដំណើរការបុគ្គលិក",
-          "completed": true
+          "completed": true,
+          "priority": "medium"
         },
         {
           "id": "t3",
           "nameEn": "Next-Gen Firewall Policy Deployment review",
           "nameKh": "សវនកម្មលើការកំណត់គោលការណ៍ Firewall ជំនាន់ថ្មី",
-          "completed": true
+          "completed": true,
+          "priority": "high"
         },
         {
           "id": "t4",
           "nameEn": "Conduct Aegis Broad Penetration Test Stage 1",
           "nameKh": "ការសាកល្បងជ្រៀតចូលប្រព័ន្ធដំណាក់កាលទី១",
-          "completed": false
+          "completed": false,
+          "priority": "critical"
         },
         {
           "id": "t5",
           "nameEn": "Disaster Recovery Plan (DRP) Multi-site Sync",
           "nameKh": "គម្រោងងើបឡើងវិញពីគ្រោះមហន្តរាយទិន្នន័យ (DRP)",
-          "completed": false
+          "completed": false,
+          "priority": "critical"
         }
       ]
     },
@@ -190,25 +195,29 @@
           "id": "t1",
           "nameEn": "SIEM Core Agent Deployment on Servers",
           "nameKh": "ការតម្លើងភ្នាក់ងារ SIEM លើគ្រប់ម៉ាស៊ីនមេ",
-          "completed": true
+          "completed": true,
+          "priority": "medium"
         },
         {
           "id": "t2",
           "nameEn": "24/7 Security Alarm Thresholds Formulation",
           "nameKh": "ការកំណត់កម្រិតរោទិ៍ប្រកាសអាសន្ន ២៤ម៉ោង",
-          "completed": true
+          "completed": true,
+          "priority": "high"
         },
         {
           "id": "t3",
           "nameEn": "Admin Role Access Control Authentication (MFA)",
           "nameKh": "ការតម្លើងការផ្ទៀងផ្ទាត់ពហុកត្តា (MFA) សម្រាប់ Admin",
-          "completed": true
+          "completed": true,
+          "priority": "high"
         },
         {
           "id": "t4",
           "nameEn": "Simulated DDOS Stress Test with 20Gbps attack",
           "nameKh": "ការសាកល្បងទប់ទល់ការវាយប្រហារ DDOS ២០ជីហ្គាប៊ីត/វិ",
-          "completed": false
+          "completed": false,
+          "priority": "critical"
         }
       ]
     }

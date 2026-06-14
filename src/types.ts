@@ -47,6 +47,7 @@ export interface ProjectTask {
   nameEn: string;
   nameKh: string;
   completed: boolean;
+  priority?: 'low' | 'medium' | 'high' | 'critical';
   note?: string;
 }
 

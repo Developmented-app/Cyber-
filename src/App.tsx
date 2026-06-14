@@ -301,6 +301,29 @@ export default function App() {
     return translations[language][key] || key;
   };
 
+  const getPriorityBadge = (p?: 'low' | 'medium' | 'high' | 'critical') => {
+    const priority = p || 'low';
+    let styling = '';
+    switch (priority) {
+      case 'critical':
+        styling = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+        break;
+      case 'high':
+        styling = 'bg-amber-500/10 text-amber-500 border-amber-500/20';
+        break;
+      case 'medium':
+        styling = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+        break;
+      default:
+        styling = 'bg-slate-500/10 text-slate-400 border-slate-800';
+    }
+    return (
+      <span className={`text-[8px] font-mono font-extrabold uppercase px-1.5 py-0.5 rounded border inline-flex items-center shrink-0 tracking-wider ${styling}`}>
+        {t(`priority.${priority}`)}
+      </span>
+    );
+  };
+
   // Sync Class list on dark theme changes
   useEffect(() => {
     localStorage.setItem('aegis-theme', theme);
@@ -1208,8 +1231,9 @@ export default function App() {
                                               }`}>
                                                 <Check className="w-3 h-3" />
                                               </div>
-                                              <span className={`text-[11px] font-mono leading-tight ${task.completed ? 'line-through text-slate-500' : 'text-slate-300'}`}>
-                                                {language === 'en' ? task.nameEn : task.nameKh}
+                                              <span className={`text-[11px] font-mono leading-tight flex items-center gap-1.5 flex-wrap ${task.completed ? 'line-through text-slate-500' : 'text-slate-300'}`}>
+                                                <span>{language === 'en' ? task.nameEn : task.nameKh}</span>
+                                                {getPriorityBadge(task.priority)}
                                               </span>
                                             </button>
                                           </div>
@@ -1361,12 +1385,13 @@ export default function App() {
                                                     </button>
                                                     <span 
                                                       title={`${language === 'en' ? task.nameEn : task.nameKh} (Click to toggle)`}
-                                                      className={`text-[10px] font-mono leading-tight truncate flex-1 min-w-0 cursor-pointer ${
+                                                      className={`text-[10px] font-mono leading-tight truncate flex-1 min-w-0 cursor-pointer flex items-center gap-1.5 ${
                                                         task.completed ? 'line-through text-slate-500' : 'text-slate-300 group-hover/gantt:text-emerald-400'
                                                       }`}
                                                       onClick={() => handleToggleTask(proj.id, task.id, !task.completed)}
                                                     >
-                                                      {language === 'en' ? task.nameEn : task.nameKh}
+                                                      <span className="truncate">{language === 'en' ? task.nameEn : task.nameKh}</span>
+                                                      {getPriorityBadge(task.priority)}
                                                     </span>
 
                                                     {/* Edit note trigger */}

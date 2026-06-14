@@ -90,6 +90,10 @@ export const translations: Record<'en' | 'kh', Record<string, string>> = {
     'task.saveNote': 'Save Note',
     'task.cancel': 'Cancel',
     'task.notePlaceholder': 'Enter key comment or reminder...',
+    'priority.low': 'Low',
+    'priority.medium': 'Medium',
+    'priority.high': 'High',
+    'priority.critical': 'Critical',
     
     'ticket.attachments': 'Evidence & Attachments',
     'ticket.attachFiles': 'Attach Files / Evidence',
@@ -215,6 +219,10 @@ export const translations: Record<'en' | 'kh', Record<string, string>> = {
     'task.saveNote': 'រក្សាទុកចំណាំ',
     'task.cancel': 'បោះបង់',
     'task.notePlaceholder': 'បញ្ចូលមតិយោបល់ ឬការរំលឹក...',
+    'priority.low': 'ទាប',
+    'priority.medium': 'មធ្យម',
+    'priority.high': 'ខ្ពស់',
+    'priority.critical': 'ធ្ងន់ធ្ងរ',
 
     'ticket.attachments': 'ភស្តុតាង និងឯកសារភ្ជាប់',
     'ticket.attachFiles': 'ភ្ជាប់ឯកសារ / ភស្តុតាង',
