@@ -233,6 +233,36 @@ export default function App() {
     downloadCsv(headers, rows, 'invoices_export.csv');
   };
 
+  const handleExportTicketsCsv = () => {
+    const headers = [
+      'Ticket ID', 
+      'User ID', 
+      'User Email', 
+      'Company Name', 
+      'Subject', 
+      'Category', 
+      'Priority', 
+      'Status', 
+      'Created At', 
+      'Last Updated', 
+      'Total Messages'
+    ];
+    const rows = tickets.map(tk => [
+      tk.id,
+      tk.userId || '',
+      tk.userEmail || '',
+      tk.companyName || '',
+      tk.subject || '',
+      tk.category || '',
+      tk.priority || '',
+      tk.status || '',
+      tk.createdAt || '',
+      tk.lastUpdated || '',
+      String(tk.messages ? tk.messages.length : 0)
+    ]);
+    downloadCsv(headers, rows, 'support_tickets_export.csv');
+  };
+
   // Base64 file converter helper
   const processFiles = (files: FileList, callback: (processed: any[]) => void) => {
     const promises = Array.from(files).map((file) => {
@@ -1575,10 +1605,22 @@ export default function App() {
                     
                     {/* Active tickets listings */}
                     <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-4">
-                      <h3 className="text-lg font-extrabold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                        <MessageSquare className="w-5 h-5 text-emerald-500" />
-                        {t('portal.activeTickets')}
-                      </h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                        <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+                          <MessageSquare className="w-5 h-5 text-emerald-500" />
+                          {t('portal.activeTickets')}
+                        </h3>
+                        {tickets.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={handleExportTicketsCsv}
+                            className="px-3 py-1.5 bg-slate-950 hover:bg-slate-850 hover:text-emerald-400 border border-slate-800 rounded-xl text-[10px] font-mono font-bold tracking-wider cursor-pointer text-slate-300 flex items-center gap-1.5 transition-all"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            {t('portal.exportTicketsCsv')}
+                          </button>
+                        )}
+                      </div>
 
                       {selectedTicket ? (
                         /* CHAT INTERACTIVE WINDOW FOR ACTIVE TICKET */
@@ -2043,10 +2085,22 @@ export default function App() {
 
               {/* Administrative tickets handling portal */}
               <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-1.5 border-b border-slate-800 pb-2">
-                  <MessageSquare className="w-5 h-5 text-emerald-500" />
-                  {t('admin.manageTickets')}
-                </h3>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-2">
+                  <h3 className="text-base font-bold text-white flex items-center gap-1.5">
+                    <MessageSquare className="w-5 h-5 text-emerald-500" />
+                    {t('admin.manageTickets')}
+                  </h3>
+                  {tickets.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleExportTicketsCsv}
+                      className="px-3 py-1.5 bg-slate-950 hover:bg-slate-850 hover:text-emerald-400 border border-slate-800 rounded-xl text-[10px] font-mono font-bold tracking-wider cursor-pointer text-slate-300 flex items-center gap-1.5 transition-all"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      {t('portal.exportTicketsCsv')}
+                    </button>
+                  )}
+                </div>
 
                 {selectedTicket ? (
                   <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-4">

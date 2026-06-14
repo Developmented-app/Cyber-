@@ -81,6 +81,7 @@ export const translations: Record<'en' | 'kh', Record<string, string>> = {
     'portal.priority': 'Threat Severity',
     'portal.desc': 'Brief Incident Logs / Ticket Details',
     'portal.submitTicket': 'Deploy Ticket File',
+    'portal.exportTicketsCsv': 'Export Tickets (CSV)',
     'portal.progress': 'Deployment Progress',
     'portal.tasks': 'Critical Task Checklist',
     
@@ -210,6 +211,7 @@ export const translations: Record<'en' | 'kh', Record<string, string>> = {
     'portal.priority': 'កម្រិតគ្រោះថ្នាក់/បន្ទាន់',
     'portal.desc': 'ព័ត៌មានលម្អិតអំពីព្រឹត្តិការណ៍',
     'portal.submitTicket': 'ដាក់បញ្ជូនផែនការរាយការណ៍',
+    'portal.exportTicketsCsv': 'ទាញយករបាយការណ៍សំបុត្រ (CSV)',
     'portal.progress': 'វឌ្ឍនភាពដំណើរការ',
     'portal.tasks': 'បញ្ជីកិច្ចការសំខាន់ៗដែលត្រូវដោះស្រាយ',
 
