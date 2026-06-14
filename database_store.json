@@ -1,0 +1,284 @@
+{
+  "users": [
+    {
+      "id": "admin-1",
+      "email": "admin@kimsan.com",
+      "password": "admin",
+      "role": "admin",
+      "companyName": "Kimsan Cyber Security",
+      "contactName": "Operational Admin",
+      "phone": "+855 12 93949145"
+    },
+    {
+      "id": "client-1",
+      "email": "it@vattanac.com.kh",
+      "password": "client",
+      "role": "client",
+      "companyName": "Vattanac Group Enterprises",
+      "contactName": "Roth Vannak",
+      "phone": "+855 12 888 777"
+    },
+    {
+      "id": "client-2",
+      "email": "security@aba.com.kh",
+      "password": "client",
+      "role": "client",
+      "companyName": "Advanced Banking Corp",
+      "contactName": "Sokha Rith",
+      "phone": "+855 99 777 555"
+    }
+  ],
+  "crmLeads": [
+    {
+      "id": "lead-1",
+      "name": "Odom Phisal",
+      "email": "ceo@khemartech.com",
+      "company": "KhemarTech Digital Group",
+      "phone": "+855 77 123 456",
+      "status": "lead",
+      "riskScore": 75,
+      "createdAt": "2026-06-10T14:30:00Z"
+    },
+    {
+      "id": "lead-2",
+      "name": "Sophy Neang",
+      "email": "ops@angkormall.kh",
+      "company": "Angkor Supermarkets Plc",
+      "phone": "+855 15 999 888",
+      "status": "contacted",
+      "riskScore": 60,
+      "createdAt": "2026-06-11T09:15:00Z"
+    },
+    {
+      "id": "lead-3",
+      "name": "Vannak Ty",
+      "email": "tech@phnombank.kh",
+      "company": "Phnom Penh Capital Savings Bank",
+      "phone": "+855 23 888 222",
+      "status": "negotiation",
+      "riskScore": 88,
+      "createdAt": "2026-06-12T11:45:00Z"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "tick-1",
+      "userId": "client-1",
+      "userEmail": "it@vattanac.com.kh",
+      "companyName": "Vattanac Group Enterprises",
+      "subject": "Urgent Phishing Campaign Simulation Review",
+      "category": "security_alert",
+      "priority": "high",
+      "status": "in_progress",
+      "createdAt": "2026-06-12T10:00:00Z",
+      "lastUpdated": "2026-06-13T16:00:00Z",
+      "messages": [
+        {
+          "id": "m1",
+          "senderRole": "client",
+          "senderName": "Roth Vannak",
+          "text": "We noted an increase in suspicious emails matching the simulated credential harvesting vectors yesterday. Can you deploy a darkweb audit for the vattanac.com.kh domain credentials?",
+          "timestamp": "2026-06-12T10:00:00Z",
+          "attachments": [
+            {
+              "id": "att-1",
+              "name": "phishing_simulation_header.svg",
+              "size": "1.2 KB",
+              "type": "image/svg+xml",
+              "content": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='80' viewBox='0 0 120 80'><rect width='120' height='80' rx='8' fill='%231e293b' stroke='%23f43f5e' stroke-width='1.5'/><text x='60' y='30' font-family='monospace' font-weight='bold' font-size='8' fill='%23f43f5e' text-anchor='middle'>ALERT DETECTED</text><text x='60' y='45' font-family='monospace' font-size='7' fill='%23cbd5e1' text-anchor='middle'>Spoofed Mail Payload</text><text x='60' y='60' font-family='monospace' font-size='6' fill='%2394a3b8' text-anchor='middle'>vattanac-support.com</text></svg>"
+            }
+          ]
+        },
+        {
+          "id": "m2",
+          "senderRole": "admin",
+          "senderName": "SOC Analyst #4",
+          "text": "Understood, Vannak. We triggered a complete corporate domain breach lookup scan in the Aegis intelligence datalake. We found 3 leaked contractor emails from late 2025. Restricting access to sensitive endpoints is advised while we compile the complete containment log.",
+          "timestamp": "2026-06-13T16:00:00Z",
+          "attachments": [
+            {
+              "id": "att-2",
+              "name": "Aegis_Domain_Breach_Audit_Report.pdf",
+              "size": "242 KB",
+              "type": "application/pdf",
+              "content": "data:text/plain;charset=utf-8,--- AEGIS SECURITY DOMAIN BREACH AUDIT REPORT ---\nTarget: vattanac.com.kh\nTime: 2026-06-13\nLeaked accounts detected: 3. Status: Compromised. Action Recommended."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tick-2",
+      "userId": "client-2",
+      "userEmail": "security@aba.com.kh",
+      "companyName": "Advanced Banking Corp",
+      "subject": "Critical: Firewall Policy Configuration Advisory",
+      "category": "it_support",
+      "priority": "critical",
+      "status": "open",
+      "createdAt": "2026-06-13T21:00:00Z",
+      "lastUpdated": "2026-06-13T21:00:00Z",
+      "messages": [
+        {
+          "id": "m1",
+          "senderRole": "client",
+          "senderName": "Sokha Rith",
+          "text": "We are deploying a brand new digital POS terminal and need to audit open ports to conform with national bank PCI guidelines. Please confirm Aegis threat mapping team is on standby.",
+          "timestamp": "2026-06-13T21:00:00Z"
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "titleEn": "ISO 27001 Certification Readiness Deployment",
+      "titleKh": "ការរៀបចំវិញ្ញាបនប័ត្រ ISO 27001 សហគ្រាស",
+      "clientCompany": "Vattanac Group Enterprises",
+      "descriptionEn": "Preparing complete security policies, controls alignment, and mock internal control checks for the entire corporate conglomerate.",
+      "descriptionKh": "ការរៀបចំបញ្ជីគោលនយោបាយសន្តិសុខ ការកែតម្រូវប្រព័ន្ធគ្រប់គ្រង និងការធ្វើតេស្តសាកល្បងសម្រាប់សហគ្រាសទាំងមូល។",
+      "status": "active",
+      "progress": 65,
+      "startDate": "2026-05-01",
+      "endDate": "2026-08-30",
+      "tasks": [
+        {
+          "id": "t1",
+          "nameEn": "Corporate Threat Asset Discovery Schema",
+          "nameKh": "ការធ្វើបញ្ជីសារពើភ័ណ្ឌទ្រព្យសកម្ម និងការគំរាមកំហែង",
+          "completed": true
+        },
+        {
+          "id": "t2",
+          "nameEn": "Access Management Policy Decrypting Standards",
+          "nameKh": "ប្រព័ន្ធគ្រប់គ្រងសិទ្ធិចូលដំណើរការបុគ្គលិក",
+          "completed": true
+        },
+        {
+          "id": "t3",
+          "nameEn": "Next-Gen Firewall Policy Deployment review",
+          "nameKh": "សវនកម្មលើការកំណត់គោលការណ៍ Firewall ជំនាន់ថ្មី",
+          "completed": true
+        },
+        {
+          "id": "t4",
+          "nameEn": "Conduct Aegis Broad Penetration Test Stage 1",
+          "nameKh": "ការសាកល្បងជ្រៀតចូលប្រព័ន្ធដំណាក់កាលទី១",
+          "completed": false
+        },
+        {
+          "id": "t5",
+          "nameEn": "Disaster Recovery Plan (DRP) Multi-site Sync",
+          "nameKh": "គម្រោងងើបឡើងវិញពីគ្រោះមហន្តរាយទិន្នន័យ (DRP)",
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "proj-2",
+      "titleEn": "Aegis SOC Threat Intelligence Integration",
+      "titleKh": "ការរួមបញ្ចូលការវិភាគការគំរាមកំហែង Aegis SOC",
+      "clientCompany": "Advanced Banking Corp",
+      "descriptionEn": "Continuous agent endpoint visibility setup, automated SIEM pipeline configurations, and SOC response team alignments.",
+      "descriptionKh": "ការរៀបចំប្រព័ន្ធត្រួតពិនិត្យ Endpoint, ការតភ្ជាប់ទិន្នន័យ SIEM ស្វ័យប្រវត្ត និងការបញ្ជាក្រុមការងារឆ្លើយតប SOC ២៤ម៉ោង។",
+      "status": "auditing",
+      "progress": 85,
+      "startDate": "2026-04-10",
+      "endDate": "2026-07-15",
+      "tasks": [
+        {
+          "id": "t1",
+          "nameEn": "SIEM Core Agent Deployment on Servers",
+          "nameKh": "ការតម្លើងភ្នាក់ងារ SIEM លើគ្រប់ម៉ាស៊ីនមេ",
+          "completed": true
+        },
+        {
+          "id": "t2",
+          "nameEn": "24/7 Security Alarm Thresholds Formulation",
+          "nameKh": "ការកំណត់កម្រិតរោទិ៍ប្រកាសអាសន្ន ២៤ម៉ោង",
+          "completed": true
+        },
+        {
+          "id": "t3",
+          "nameEn": "Admin Role Access Control Authentication (MFA)",
+          "nameKh": "ការតម្លើងការផ្ទៀងផ្ទាត់ពហុកត្តា (MFA) សម្រាប់ Admin",
+          "completed": true
+        },
+        {
+          "id": "t4",
+          "nameEn": "Simulated DDOS Stress Test with 20Gbps attack",
+          "nameKh": "ការសាកល្បងទប់ទល់ការវាយប្រហារ DDOS ២០ជីហ្គាប៊ីត/វិ",
+          "completed": false
+        }
+      ]
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv-1",
+      "clientCompany": "Vattanac Group Enterprises",
+      "titleEn": "Enterprise SOC Annual Sentinel Subscriptions",
+      "titleKh": "កិច្ចសន្យាប្រចាំឆ្នាំការត្រួតពិនិត្យ Aegis SOC",
+      "amount": 14500,
+      "dueDate": "2026-07-01",
+      "status": "unpaid",
+      "createdAt": "2026-06-01",
+      "billingPeriod": "June 2026 - May 2027"
+    },
+    {
+      "id": "inv-2",
+      "clientCompany": "Advanced Banking Corp",
+      "titleEn": "Complete Full-Scope Tactical Red Team Audit",
+      "titleKh": "ថ្លៃសេវាកម្មវាយប្រហារសាកល្បង Red Team ពេញលេញ",
+      "amount": 8200,
+      "dueDate": "2026-06-25",
+      "status": "paid",
+      "createdAt": "2026-05-25",
+      "billingPeriod": "Milestone 1 Completed"
+    }
+  ],
+  "blogPosts": [
+    {
+      "id": "blog-1",
+      "titleEn": "APT-39 Active Threat Alert: Target Vulnerability Targets",
+      "titleKh": "ការប្រកាសអាសន្នក្រុមគំរាមកំហែង APT-39៖ គោលដៅវាយប្រហារក្នុងតំបន់",
+      "contentEn": "Aegis threat team is tracking an active campaign by advanced persistent threat actors targeting telecom assets inside Cambodia and surrounding ASEAN environments. The malware utilizes sophisticated DLL sideloading techniques in vulnerable software.",
+      "contentKh": "ក្រុមសន្តិសុខ Aegis កំពុងតាមដានយ៉ាងសកម្មនូវយុទ្ធនាការវាយប្រហារពីក្រុម APT-39 ដែលផ្តោតលើហេដ្ឋារចនាសម្ព័ន្ធព័ត៌មានវិទ្យានិងទូរគមនាគមន៍នៅក្នុងប្រទេសកម្ពុជានិងតំបន់អាស៊ាន។ មេរោគនេះប្រើប្រាស់បច្ចេកទេស DLL sideloading។",
+      "authorEn": "Dr. Chantara Sorn, SOC Architect",
+      "authorKh": "បណ្ឌិត សន ចាន់តារា, បណ្តាញការពារ SOC",
+      "categoryEn": "IMMEDIATE ADVISORY",
+      "categoryKh": "ការណែនាំបន្ទាន់",
+      "date": "June 12, 2026",
+      "readTime": "3 min read",
+      "isAdvisory": true
+    },
+    {
+      "id": "blog-2",
+      "titleEn": "Decoding ISO 27001:2022 Guidelines for Financial Firms",
+      "titleKh": "ការវិភាគលើស្តង់ដារ ISO 27001:2022 សម្រាប់ស្ថាប័នហិរញ្ញវត្ថុ",
+      "contentEn": "How emerging financial tech systems can structurally adapt to the latest cybersecurity frameworks. Learn the essential 93 controls matrix and cloud security standards mandated by regional bank councils.",
+      "contentKh": "របៀបដែលប្រព័ន្ធបច្ចេកវិទ្យាហិរញ្ញវត្ថុដែលកំពុងរីកចម្រើនអាចសម្របខ្លួនទៅនឹងក្របខ័ណ្ឌសន្តិសុខចុងក្រោយបង្អស់។ សិក្សាអំពីចំណុចគ្រប់គ្រងសំខាន់ៗទាំង៩៣ និងបទប្បញ្ញត្តិសន្តិសុខ Cloud។",
+      "authorEn": "Visal Kong, Security Lead",
+      "authorKh": "គង់ វិសាល, ប្រធានផ្នែកសន្តិសុខ",
+      "categoryEn": "WHITE PAPER",
+      "categoryKh": "សៀវភៅណែនាំ",
+      "date": "June 08, 2026",
+      "readTime": "8 min read",
+      "isAdvisory": false
+    },
+    {
+      "id": "blog-3",
+      "titleEn": "Best MFA Protocols to Resolute Zero-Day Vulnerability Attacks",
+      "titleKh": "របៀបកំណត់ការផ្ទៀងផ្ទាត់ពហុកត្តា (MFA) ការពារការលួចទិន្នន័យ",
+      "contentEn": "Relying exclusively on SMS OTP security is no longer adequate. We break down enterprise token protocols, hardware authentication keys, and FIDO2 authentication paradigms ensuring total corporate system integrity.",
+      "contentKh": "ការប្រើប្រាស់តែប្រព័ន្ធផ្ទៀងផ្ទាត់សារ SMS តែមួយមុខលែងមានសុវត្ថិភាពខ្ពស់ទៀតហើយ។ យើងបង្ហាញអំពីពិធីការ Enterprise Token, គ្រាប់ Hardware key និងពិធីការ FIDO2 ការពារប្រព័ន្ធបានយ៉ាងរឹងមាំ។",
+      "authorEn": "Aegis Security Operations",
+      "authorKh": "ក្រុមប្រតិបត្តិការ Aegis",
+      "categoryEn": "PRACTICAL GUIDE",
+      "categoryKh": "ការណែនាំអនុវត្ត",
+      "date": "May 30, 2026",
+      "readTime": "5 min read",
+      "isAdvisory": false
+    }
+  ]
+}

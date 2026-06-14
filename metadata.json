@@ -1,0 +1,6 @@
+{
+  "name": "Kimsan Cyber Security Portal",
+  "description": "Enterprise-grade IT and Cybersecurity Services company platform featuring client portal, CRM, ticket, project, and blog systems, with English and Khmer support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
